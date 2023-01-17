@@ -25,11 +25,6 @@ pipeline {
       }
   }
 
-  options {
-    timestamps()
-    timeout(time: 30, unit: 'MINUTES')
-  }
-
     stages {
         stage('Prepare') {
             steps {
