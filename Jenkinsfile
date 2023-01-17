@@ -1,43 +1,12 @@
 pipeline {
-    agent {
-      kubernetes {
-    yaml '''
-      apiVersion: v1
-      kind: Pod
-      metadata:
-        labels:
-          build: agent
-      spec:
-        containers:
-        - name: terraform
-          image: hashicorp/terraform:1.2.0-rc1
-          resources:
-            requests:
-              memory: 100Mi
-              cpu: 100m
-            limits:
-              memory: 300Mi
-              cpu: 150m
-          command:
-          - cat
-          tty: true
-      '''
-      }
-  }
+    agent any
 
     stages {
-        stage('Prepare') {
+        stage('terraform') {
             steps {
-              container('terraform') {
-                  withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                      sh '''
-                        terraform init
-                        terraform validate
-                        '''
-                      }
-                  }
-              }
-          }
+                sh './terraformw apply -auto-approve -no-color'
+            }
+        }
 
 /*
         stage('Plan') {
