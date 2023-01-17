@@ -44,7 +44,7 @@ pipeline {
               }
           }
 
-
+/*
         stage('Plan') {
             steps {
               container('terraform') {
@@ -72,6 +72,6 @@ pipeline {
                 }
             }
         }
-
+*/
     }
 }
