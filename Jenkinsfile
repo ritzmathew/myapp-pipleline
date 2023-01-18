@@ -23,12 +23,12 @@ spec:
   serviceAccountName: jenkins
   containers:
   - name: dind
-      image: docker:18.05-dind
-      securityContext:
-        privileged: true
-      volumeMounts:
-        - name: dind-storage
-          mountPath: /var/lib/docker
+    image: docker:18.05-dind
+    securityContext:
+      privileged: true
+    volumeMounts:
+      - name: dind-storage
+        mountPath: /var/lib/docker
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
