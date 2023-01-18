@@ -14,30 +14,30 @@ pipeline {
             label 'sample-app'
             defaultContainer 'jnlp'
             yaml """
-            apiVersion: v1
-            kind: Pod
-            metadata:
-            labels:
-            component: ci
-            spec:
-            serviceAccountName: jenkins
-            containers:
-            - name: dind
-            image: docker:18.05-dind
-            securityContext:
-            privileged: true
-            volumeMounts:
-            - name: dind-storage
-            mountPath: /var/lib/docker
-            - name: kubectl
-            image: gcr.io/cloud-builders/kubectl
-            command:
-            - cat
-            tty: true
-            volumes:
-            - name: dind-storage
-            emptyDir: {}
-            """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  component: ci
+spec:
+  serviceAccountName: jenkins
+  containers:
+  - name: dind
+      image: docker:18.05-dind
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dind-storage
+          mountPath: /var/lib/docker
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: dind-storage
+    emptyDir: {}
+"""
         }
     }
 
