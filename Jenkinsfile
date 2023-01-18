@@ -46,14 +46,14 @@ pipeline {
         stage('docker build and push') {
             steps {
                 git 'https://github.com/WebGoat/WebGoat.git'
-            }
-            container('dind') {
+                container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
-                    sh '''
-                    docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PWD}"
-                    docker build . -t ${IMAGE_TAG}"
-                    '''
+                    sh """
+                        docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PWD}"
+                        docker build . -t ${IMAGE_TAG}"
+                    """
                 }
+            }
             }
         }
         /*
