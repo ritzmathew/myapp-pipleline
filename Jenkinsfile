@@ -23,7 +23,7 @@ spec:
   serviceAccountName: jenkins
   containers:
   - name: dind
-    image: docker:18.05-dind
+    image: docker:23.0.0-rc.1-dind
     securityContext:
       privileged: true
     volumeMounts:
