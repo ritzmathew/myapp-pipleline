@@ -48,10 +48,10 @@ spec:
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
                 container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
-                    sh """
+                    sh '''
                         docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PWD}"
                         docker build . -t ${IMAGE_TAG}"
-                    """
+                    '''
                 }
             }
             }
