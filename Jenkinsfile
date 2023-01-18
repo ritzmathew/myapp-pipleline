@@ -23,7 +23,7 @@ spec:
   serviceAccountName: jenkins
   containers:
   - name: dind
-    image: docker:23.0.0-rc.1-dind
+    image: docker:18.05-dind
     securityContext:
       privileged: true
     volumeMounts:
@@ -48,10 +48,8 @@ spec:
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
                 container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
-                    sh '''
-                        echo $DOCKERHUB_PWD | docker login -u $DOCKERHUB_USR --password-stdin"
-                        docker build . -t ${IMAGE_TAG}"
-                    '''
+                    sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PWD'
+                    sh 'docker build . -t ${IMAGE_TAG}'         
                 }
             }
             }
