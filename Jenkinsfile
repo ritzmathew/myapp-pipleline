@@ -49,7 +49,7 @@ spec:
                 container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
                     sh '''
-                        echo $DOCKERHUB_PWD | docker login -u ${DOCKERHUB_USR} -p"
+                        docker login -u ${DOCKERHUB_USR} -p ${$DOCKERHUB_PWD}"
                         docker build . -t ${IMAGE_TAG}"
                     '''
                 }
