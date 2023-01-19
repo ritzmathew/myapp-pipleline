@@ -1,0 +1,26 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: webgoat-canary
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+          app: webgoat
+          env: canary
+  template:
+    metadata:
+      labels:
+        app: webgoat
+        env: canary
+    spec:
+      containers:
+      - name: webgoat
+        image: ritzmathew/webgoat:canary
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        imagePullPolicy: Always
+        ports:
+          containerPort: 443
