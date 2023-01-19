@@ -46,6 +46,8 @@ spec:
         stage('docker build and push') {
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
+                sh 'java -version'
+                sh 'mvn -version'
                 sh './mvnw clean install'
                 container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
