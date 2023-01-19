@@ -10,7 +10,7 @@ variable "storage_class" {
 
 resource "google_storage_bucket" "tf-bucket" {
   project       = var.project_id
-  name          = var.bucket_name
+  name          = "${var.project_id}-tf-bucket"
   location      = var.region
   force_destroy = true
   storage_class = var.storage_class
