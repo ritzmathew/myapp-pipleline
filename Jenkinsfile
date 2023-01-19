@@ -3,6 +3,7 @@ pipeline {
     environment {
         PROJECT = "my-sample-app-375112"
         APP_NAME = "webgoat"
+        SVC_NAME = "webgoat-service"
         CLUSTER = "sample-cluster"
         CLUSTER_ZONE = "us-east1-d"
         IMAGE_TAG = "ritzmathew/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
@@ -60,7 +61,7 @@ spec:
     }
 
     stages {
-        /*
+        
         stage('checkout scm and compile') {
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
@@ -82,7 +83,7 @@ spec:
               }
             }
         }
-         */
+
         stage('terraform init') {
           steps {
             container('terraform') {
@@ -115,7 +116,7 @@ spec:
               sh("sed -i.bak 's#ritzmathew/webgoat:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-              sh("echo http://`kubectl --namespace=production get service/${FE_SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${FE_SVC_NAME}")
+              sh("echo http://`kubectl --namespace=production get service/${SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${SVC_NAME}")
             }
           }
         }
