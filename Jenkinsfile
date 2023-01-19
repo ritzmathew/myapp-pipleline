@@ -53,7 +53,8 @@ spec:
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
                 container('maven') {
-                    sh 'unset MAVEN_CONFIG && env && ./mvnw clean install'
+                    // workaround to unset MAVEN_CONFIG: https://issues.jenkins.io/browse/JENKINS-47890?
+                    sh 'unset MAVEN_CONFIG && env && ./mvnw clean package -Dmaven.test.skip'
                 }
             }
         }
