@@ -29,6 +29,12 @@ spec:
     volumeMounts:
       - name: dind-storage
         mountPath: /var/lib/docker
+  - name: maven
+    image: maven:3.8.1-jdk-17
+    command:
+    - sleep
+    args:
+    - 99d
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
@@ -43,12 +49,17 @@ spec:
 
     stages {
 
-        stage('docker build and push') {
+        stage('checkout scm and compile') {
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
-                sh 'java -version'
-                sh 'mvn -version'
-                sh './mvnw clean install'
+                container('maven') {
+                    sh './mvnw clean install'
+                }
+            }
+        }
+
+        stage('docker build and push') {
+            steps {
                 container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
                     sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PWD'
