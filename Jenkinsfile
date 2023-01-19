@@ -63,7 +63,7 @@ spec:
         
         stage('checkout scm and build') {
             steps {
-                git branch: 'main', url: 'https://github.com/ritzmathew/LittleFlowerKalewadi.git', credentialsId: 'githubcreds'
+                git branch: 'master', url: 'https://github.com/ritzmathew/LittleFlowerKalewadi.git', credentialsId: 'githubcreds'
                 container('dind') {
                 sh 'docker build . -t ${IMAGE_TAG}'
               }
