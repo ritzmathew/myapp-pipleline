@@ -86,7 +86,7 @@ spec:
         stage('terraform init') {
           steps {
             container('terraform') {
-              withCredentials([file(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+              withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                 sh 'terraform init'
                 sh 'terraform apply -auto-approve -no-color'
               }
