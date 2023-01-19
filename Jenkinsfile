@@ -5,7 +5,7 @@ pipeline {
         APP_NAME = "webgoat"
         SVC_NAME = "webgoat-service"
         CLUSTER = "my-sample-app-375112-cluster"
-        CLUSTER_ZONE = "us-east1-d"
+        CLUSTER_ZONE = "us-east4-b"
         IMAGE_TAG = "ritzmathew/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
         JENKINS_CRED = "${PROJECT}"
     }
@@ -113,8 +113,11 @@ spec:
             container('kubectl') {
               // Change deployed image in canary to the one we just built
               sh("sed -i.bak 's#ritzmathew/webgoat:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
-              sh "kubectl apply -f ./k8s/canary/canary.yaml"
-              sh "kubectl apply -f ./k8s/service.yaml"
+              //sh "kubectl apply -f ./k8s/canary/canary.yaml"
+              //sh "kubectl apply -f ./k8s/service.yaml"
+              step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
+              step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+              sh("echo http://`kubectl --namespace=production get service/${SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${SVC_NAME}")
               sh("echo http://`kubectl --namespace=production get service/${SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${SVC_NAME}")
             }
           }
