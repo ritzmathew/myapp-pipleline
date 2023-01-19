@@ -65,6 +65,7 @@ spec:
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
                     sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PWD'
                     sh 'docker build . -t ${IMAGE_TAG}'         
+                    sh 'docker push ${IMAGE_TAG}'         
                 }
             }
             }
