@@ -2,11 +2,11 @@ pipeline {
 
     environment {
         PROJECT = "my-sample-app-375112"
-        APP_NAME = "webgoat"
-        SVC_NAME = "webgoat-service"
+        APP_NAME = "lfkwebapp"
+        SVC_NAME = "lfkwebapp-service"
         CLUSTER = "my-sample-app-375112-cluster"
         CLUSTER_LOCATION = "us-east1"
-        IMAGE_TAG = "ritzmathew/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+        IMAGE_TAG = "ritzmathew/lfkwebapp:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
         JENKINS_CRED = "${PROJECT}"
     }
 
@@ -61,23 +61,20 @@ spec:
 
     stages {
         
-        stage('checkout scm and compile') {
+        stage('checkout scm and build') {
             steps {
-                git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
-                sh("sed -i 's#8080#443#' Dockerfile")
-                container('maven') {
-                    // workaround to unset MAVEN_CONFIG: https://issues.jenkins.io/browse/JENKINS-47890?
-                    sh 'unset MAVEN_CONFIG && env && ./mvnw clean package -Dmaven.test.skip'
-                }
+                git branch: 'main', url: 'https://github.com/ritzmathew/LittleFlowerKalewadi.git', credentialsId: 'githubcreds'
+                container('dind') {
+                sh 'docker build . -t ${IMAGE_TAG}'
+              }
             }
         }
 
-        stage('docker build and push') {
+        stage('docker push') {
             steps {
               container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
                     sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PWD'
-                    sh 'docker build . -t ${IMAGE_TAG}'         
                     sh 'docker push ${IMAGE_TAG}'         
                 }
               }
@@ -112,7 +109,7 @@ spec:
           when { branch 'canary' }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/webgoat:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/lfkwebapp:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
@@ -128,7 +125,7 @@ spec:
           }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/webgoat:prod#${IMAGE_TAG}#' ./k8s/prod/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/lfkwebapp:prod#${IMAGE_TAG}#' ./k8s/prod/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/prod', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
@@ -143,7 +140,7 @@ spec:
           }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/webgoat:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/lfkwebapp:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
