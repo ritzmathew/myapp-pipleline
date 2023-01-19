@@ -64,6 +64,7 @@ spec:
         stage('checkout scm and build') {
             steps {
                 container('dind') {
+                  sh("sed -i.bak 's#Version: 1.0#Version:1.0.${env.BUILD_NUMBER}-${env.BRANCH_NAME}#' ./sampleapp/index.html")
                   sh 'docker build ./sampleapp -t ${IMAGE_TAG}'
               }
             }
