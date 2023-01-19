@@ -5,7 +5,7 @@ pipeline {
         APP_NAME = "webgoat"
         CLUSTER = "sample-cluster"
         CLUSTER_ZONE = "us-east1-d"
-        IMAGE_TAG = "webgoat/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+        IMAGE_TAG = "ritzmathew/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
         JENKINS_CRED = "${PROJECT}"
     }
 
