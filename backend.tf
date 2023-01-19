@@ -13,3 +13,10 @@ resource "google_storage_bucket" "tf-bucket" {
     enabled = true
   }
 }
+
+terraform {
+ backend "gcs" {
+   bucket  = "${var.project_id}-tf-bucket"
+   prefix  = "terraform/state"
+ }
+}
