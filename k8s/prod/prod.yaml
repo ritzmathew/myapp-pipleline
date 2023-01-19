@@ -23,4 +23,4 @@ spec:
             cpu: "100m"
         imagePullPolicy: Always
         ports:
-        - containerPort: 443
+        - containerPort: 80
