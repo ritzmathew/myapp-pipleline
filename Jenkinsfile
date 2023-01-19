@@ -113,9 +113,8 @@ spec:
             container('kubectl') {
               // Change deployed image in canary to the one we just built
               sh("sed -i.bak 's#ritzmathew/webgoat:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
-              sh "kubectl get pods"
-              step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
-              step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+              sh "kubectl apply -f ./k8s/canary/canary.yaml"
+              sh "kubectl apply -f ./k8s/service.yaml"
               sh("echo http://`kubectl --namespace=production get service/${SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${SVC_NAME}")
             }
           }
