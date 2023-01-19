@@ -1,22 +1,22 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: webgoat-prod
+  name: lfkwebapp-prod
 spec:
   replicas: 1
   selector:
       matchLabels:
-          app: webgoat
+          app: lfkwebapp
           env: prod
   template:
     metadata:
       labels:
-        app: webgoat
+        app: lfkwebapp
         env: prod
     spec:
       containers:
-      - name: webgoat
-        image: ritzmathew/webgoat:prod
+      - name: lfkwebapp
+        image: ritzmathew/lfkwebapp:prod
         resources:
           limits:
             memory: "500Mi"
