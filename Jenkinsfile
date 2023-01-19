@@ -4,7 +4,7 @@ pipeline {
         PROJECT = "my-sample-app-375112"
         APP_NAME = "webgoat"
         SVC_NAME = "webgoat-service"
-        CLUSTER = "sample-cluster"
+        CLUSTER = "my-sample-app-375112-cluster"
         CLUSTER_ZONE = "us-east1-d"
         IMAGE_TAG = "ritzmathew/webgoat:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
         JENKINS_CRED = "${PROJECT}"
@@ -12,7 +12,6 @@ pipeline {
 
     agent {
         kubernetes {
-            label 'sample-app'
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
@@ -120,42 +119,5 @@ spec:
             }
           }
         }
-
-        /*
-                stage('terraform') {
-                    steps {
-                        sh 'terraform apply -auto-approve -no-color'
-                    }
-                }
-
-
-                stage('Plan') {
-                    steps {
-                      container('terraform') {
-                          withCredentials([usernamePassword(credentialsId: 'aws_jenkins_creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                              sh '''
-                                terraform plan
-                              '''
-                            }
-                        }
-                    }
-                }
-
-
-                stage('Apply') {
-                  when {
-                    branch 'main'
-                  }
-                  steps {
-                    container('terraform') {
-                        withCredentials([usernamePassword(credentialsId: 'aws_jenkins_creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                            sh '''
-                                terraform apply --auto-approve
-                            '''
-                            }
-                        }
-                    }
-                }
-        */
     }
 }
