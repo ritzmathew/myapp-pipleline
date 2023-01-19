@@ -65,7 +65,7 @@ spec:
             steps {
                 git branch: 'master', url: 'https://github.com/ritzmathew/LittleFlowerKalewadi.git'
                 container('dind') {
-                  sh 'docker build . -t ${IMAGE_TAG}'
+                  sh 'docker build ./LittleFlowerKalewadi -t ${IMAGE_TAG}'
               }
             }
         }
