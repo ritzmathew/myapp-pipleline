@@ -1,26 +1,26 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: lfkwebapp-prod
+  name: sampleapp-prod
 spec:
   replicas: 1
   selector:
       matchLabels:
-          app: lfkwebapp
+          app: sampleapp
           env: prod
   template:
     metadata:
       labels:
-        app: lfkwebapp
+        app: sampleapp
         env: prod
     spec:
       containers:
-      - name: lfkwebapp
-        image: ritzmathew/lfkwebapp:prod
+      - name: sampleapp
+        image: ritzmathew/sampleapp:prod
         resources:
           limits:
             memory: "500Mi"
             cpu: "100m"
         imagePullPolicy: Always
         ports:
-        - containerPort: 443
+        - containerPort: 80

@@ -1,26 +1,26 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: lfkwebapp-canary
+  name: sampleapp-canary
 spec:
   replicas: 1
   selector:
       matchLabels:
-          app: lfkwebapp
+          app: sampleapp
           env: canary
   template:
     metadata:
       labels:
-        app: lfkwebapp
+        app: sampleapp
         env: canary
     spec:
       containers:
-      - name: lfkwebapp
-        image: ritzmathew/lfkwebapp:canary
+      - name: sampleapp
+        image: ritzmathew/sampleapp:canary
         resources:
           limits:
             memory: "500Mi"
             cpu: "100m"
         imagePullPolicy: Always
         ports:
-        - containerPort: 443
+        - containerPort: 80

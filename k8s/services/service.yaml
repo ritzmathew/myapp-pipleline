@@ -1,17 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: lfkwebapp-service
+  name: sampleapp-service
   labels:
-    app: lfkwebapp-service
+    app: sampleapp-service
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - name: http
-    port: 443
+    port: 80
     protocol: TCP
-    targetPort: 443
-    nodePort: 32185
+    targetPort: 80
   selector:
-    app: lfkwebapp
+    app: sampleapp
   sessionAffinity: None

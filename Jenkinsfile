@@ -2,11 +2,11 @@ pipeline {
 
     environment {
         PROJECT = "my-sample-app-375112"
-        APP_NAME = "lfkwebapp"
-        SVC_NAME = "lfkwebapp-service"
+        APP_NAME = "sampleapp"
+        SVC_NAME = "sampleapp-service"
         CLUSTER = "my-sample-app-375112-cluster"
         CLUSTER_LOCATION = "us-east1"
-        IMAGE_TAG = "ritzmathew/lfkwebapp:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+        IMAGE_TAG = "ritzmathew/sampleapp:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
         JENKINS_CRED = "${PROJECT}"
     }
 
@@ -63,9 +63,8 @@ spec:
         
         stage('checkout scm and build') {
             steps {
-                git branch: 'master', url: 'https://github.com/ritzmathew/LittleFlowerKalewadi.git'
                 container('dind') {
-                  sh 'docker build ./LittleFlowerKalewadi -t ${IMAGE_TAG}'
+                  sh 'docker build ./sampleapp -t ${IMAGE_TAG}'
               }
             }
         }
@@ -109,7 +108,7 @@ spec:
           when { branch 'canary' }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/lfkwebapp:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/sampleapp:canary#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
@@ -125,7 +124,7 @@ spec:
           }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/lfkwebapp:prod#${IMAGE_TAG}#' ./k8s/prod/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/sampleapp:prod#${IMAGE_TAG}#' ./k8s/prod/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/prod', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
@@ -140,7 +139,7 @@ spec:
           }
           steps {
             container('kubectl') {
-              sh("sed -i.bak 's#ritzmathew/lfkwebapp:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
+              sh("sed -i.bak 's#ritzmathew/sampleapp:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
