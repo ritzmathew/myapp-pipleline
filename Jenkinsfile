@@ -64,6 +64,7 @@ spec:
         stage('checkout scm and compile') {
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
+                sh("sed -i 's#8080#443#' Dockerfile")
                 container('maven') {
                     // workaround to unset MAVEN_CONFIG: https://issues.jenkins.io/browse/JENKINS-47890?
                     sh 'unset MAVEN_CONFIG && env && ./mvnw clean package -Dmaven.test.skip'
