@@ -53,7 +53,7 @@ spec:
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
                 container('maven') {
-                    sh './mvnw clean install'
+                    sh 'unset MAVEN_CONFIG && env && ./mvnw clean install'
                 }
             }
         }
