@@ -40,6 +40,18 @@ spec:
     command:
     - cat
     tty: true
+  - name: terraform
+    image: hashicorp/terraform:1.2.0-rc1
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+      limits:
+        memory: 300Mi
+        cpu: 150m
+    command:
+    - cat
+    tty: true
   volumes:
   - name: dind-storage
     emptyDir: {}
@@ -61,15 +73,27 @@ spec:
 
         stage('docker build and push') {
             steps {
-                container('dind') {
+              container('dind') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubcreds', passwordVariable: 'DOCKERHUB_PWD', usernameVariable: 'DOCKERHUB_USR')]) {
                     sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PWD'
                     sh 'docker build . -t ${IMAGE_TAG}'         
                     sh 'docker push ${IMAGE_TAG}'         
                 }
-            }
+              }
             }
         }
+
+        stage('terraform init') {
+          steps {
+            container('terraform') {
+              withCredentials([file(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                sh 'terraform init'
+                sh 'terraform apply -auto-approve -no-color'
+              }
+            }
+          }
+        }
+
         /*
                 stage('terraform') {
                     steps {
