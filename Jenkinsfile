@@ -85,20 +85,14 @@ spec:
          */
         stage('terraform init') {
           steps {
-            sh 'terraform -version'
-            withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'JENKINS_SA_TOKEN')]) {
+            container('terraform') {
+              checkout scm
+              withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                 sh "export GOOGLE_APPLICATION_CREDENTIALS='${JENKINS_SA_TOKEN}'"
                 sh 'terraform init'
                 sh 'terraform apply -auto-approve -no-color'
               }
-            /* 
-            container('terraform') {
-              withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                sh 'terraform init'
-                sh 'terraform apply -auto-approve -no-color'
-              }
             }
-            */
           }
         }
 
