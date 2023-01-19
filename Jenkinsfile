@@ -30,7 +30,7 @@ spec:
       - name: dind-storage
         mountPath: /var/lib/docker
   - name: maven
-    image: maven:3.8.1-jdk-17
+    image: maven:3.8.3-jdk-17
     command:
     - sleep
     args:
