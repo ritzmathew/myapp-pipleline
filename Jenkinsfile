@@ -60,7 +60,7 @@ spec:
     }
 
     stages {
-
+        /*
         stage('checkout scm and compile') {
             steps {
                 git branch: 'main', url: 'https://github.com/WebGoat/WebGoat.git'
@@ -82,15 +82,23 @@ spec:
               }
             }
         }
-
+         */
         stage('terraform init') {
           steps {
+            sh 'terraform -version'
+            withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'JENKINS_SA_TOKEN')]) {
+                sh "export GOOGLE_APPLICATION_CREDENTIALS='${JENKINS_SA_TOKEN}'"
+                sh 'terraform init'
+                sh 'terraform apply -auto-approve -no-color'
+              }
+            /* 
             container('terraform') {
               withCredentials([string(credentialsId: 'jenkins-sa-token', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                 sh 'terraform init'
                 sh 'terraform apply -auto-approve -no-color'
               }
             }
+            */
           }
         }
 
