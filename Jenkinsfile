@@ -133,5 +133,20 @@ spec:
             }
           }
         }
+
+        stage('Deploy Dev') {
+          when {
+            not { branch 'main' }
+            not { branch 'master' }
+            not { branch 'canary' }
+          }
+          steps {
+            container('kubectl') {
+              sh("sed -i.bak 's#ritzmathew/webgoat:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
+              step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
+              step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+            }
+          }
+        }
     }
 }
