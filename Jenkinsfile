@@ -29,12 +29,6 @@ spec:
     volumeMounts:
       - name: dind-storage
         mountPath: /var/lib/docker
-  - name: maven
-    image: maven:3.8.3-openjdk-17
-    command:
-    - sleep
-    args:
-    - 99d
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
@@ -61,7 +55,7 @@ spec:
 
     stages {
         
-        stage('checkout scm and build') {
+        stage('docker build') {
             steps {
                 container('dind') {
                   sh("sed -i.bak 's#Version: 1.0#Version:1.0.${env.BUILD_NUMBER}-${env.BRANCH_NAME}#' ./sampleapp/index.html")
@@ -105,7 +99,7 @@ spec:
           }
         }
 
-        stage('Deploy Canary') {
+        stage('deploy Canary') {
           when { branch 'canary' }
           steps {
             container('kubectl') {
@@ -116,7 +110,7 @@ spec:
           }
         }
 
-        stage('Deploy Production') {
+        stage('deploy Production') {
           when { 
             anyOf { 
               branch 'main' 
@@ -132,7 +126,7 @@ spec:
           }
         }
 
-        stage('Deploy Dev') {
+        stage('deploy Dev') {
           when {
             not { branch 'main' }
             not { branch 'master' }
