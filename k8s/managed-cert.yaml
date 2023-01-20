@@ -4,4 +4,4 @@ metadata:
   name: managed-cert
 spec:
   domains:
-    - my-sample-app-375112.com
+    - my-sample-app-375112.co.uk
