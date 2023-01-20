@@ -126,7 +126,7 @@ spec:
           }
         }
 
-        stage('deploy Dev') {
+        stage('deploy Development') {
           when {
             not { branch 'main' }
             not { branch 'master' }
@@ -137,6 +137,17 @@ spec:
               sh("sed -i.bak 's#ritzmathew/sampleapp:dev#${IMAGE_TAG}#' ./k8s/dev/*.yaml")
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
               step([$class: 'KubernetesEngineBuilder', namespace:'development', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+            }
+          }
+        }
+
+        stage('deploy Staging') {
+          when { branch 'stag' }
+          steps {
+            container('kubectl') {
+              sh("sed -i.bak 's#ritzmathew/sampleapp:stag#${IMAGE_TAG}#' ./k8s/stag/*.yaml")
+              step([$class: 'KubernetesEngineBuilder', namespace:'staging', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
+              step([$class: 'KubernetesEngineBuilder', namespace:'staging', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_LOCATION, manifestPattern: 'k8s/stag', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
             }
           }
         }

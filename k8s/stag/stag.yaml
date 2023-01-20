@@ -1,0 +1,26 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: sampleapp-stag
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+          app: sampleapp
+          env: stag
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+        env: stag
+    spec:
+      containers:
+      - name: sampleapp
+        image: ritzmathew/sampleapp:stag
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
